@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom'
 import { Icon } from '../icons.jsx'
-import logo from '../assets/Fashion Brand Art Design Logo.svg'
 import { useAuth } from '../auth/AuthContext.jsx'
+
+const logo = '/favicon.svg'
 
 const NAV = [
   { to: '/dashboard',     label: 'Dashboard',   icon: 'chart' },

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext.jsx'
-import logo from '../assets/Fashion Brand Art Design Logo.svg'
+
+const logo = '/favicon.svg'
 
 export default function LoginPage() {
   const { user, login } = useAuth()

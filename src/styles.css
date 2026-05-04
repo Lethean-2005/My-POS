@@ -101,7 +101,7 @@ input { font-family: inherit; }
   gap: 10px;
 }
 .brand-logo-img {
-  height: 56px;
+  height: 36px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -730,7 +730,7 @@ input { font-family: inherit; }
   gap: 16px;
 }
 .auth-logo {
-  height: 56px;
+  height: 40px;
   width: auto;
   align-self: center;
   margin-bottom: 8px;
@@ -835,7 +835,7 @@ input { font-family: inherit; }
   padding: 8px 0 16px;
   border-bottom: 1px solid var(--border);
 }
-.side-brand img { height: 48px; width: auto; }
+.side-brand img { height: 32px; width: auto; }
 
 .side-nav {
   display: flex;
