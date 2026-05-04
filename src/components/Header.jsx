@@ -1,15 +1,19 @@
+import { Link } from 'react-router-dom'
 import { Icon } from '../icons.jsx'
 import logo from '../assets/Fashion Brand Art Design Logo.svg'
+import { useAuth } from '../auth/AuthContext.jsx'
 
 const NAV = [
-  { id: 'pos', label: 'POS', icon: 'pos' },
-  { id: 'orders', label: 'Orders', icon: 'orders' },
-  { id: 'kitchen', label: 'Kitchen', icon: 'kitchen' },
-  { id: 'reservation', label: 'Reservation', icon: 'reservation' },
-  { id: 'table', label: 'Table', icon: 'table' }
+  { id: 'pos',         label: 'POS',         icon: 'pos',         to: '/pos' },
+  { id: 'orders',      label: 'Orders',      icon: 'orders',      to: '/pos' },
+  { id: 'kitchen',     label: 'Kitchen',     icon: 'kitchen',     to: '/pos' },
+  { id: 'reservation', label: 'Reservation', icon: 'reservation', to: '/pos' },
+  { id: 'table',       label: 'Table',       icon: 'table',       to: '/pos' }
 ]
 
 export default function Header({ active = 'pos', onChange }) {
+  const { user, logout } = useAuth()
+
   return (
     <header className="app-header">
       <div className="brand">
@@ -20,15 +24,21 @@ export default function Header({ active = 'pos', onChange }) {
       </div>
 
       <nav className="top-nav">
+        {user && (
+          <Link to="/dashboard" className="nav-tab">
+            <Icon name="chart" size={16} /> Dashboard
+          </Link>
+        )}
         {NAV.map(n => (
-          <button
+          <Link
             key={n.id}
+            to={n.to}
             className={`nav-tab${active === n.id ? ' active' : ''}`}
             onClick={() => onChange?.(n.id)}
           >
             <Icon name={n.icon} size={16} />
             <span>{n.label}</span>
-          </button>
+          </Link>
         ))}
       </nav>
 
@@ -38,9 +48,19 @@ export default function Header({ active = 'pos', onChange }) {
           <Icon name="bell" size={18} />
           <span className="dot" />
         </button>
-        <div className="avatar">
-          <img src="https://i.pravatar.cc/64?img=12" alt="profile" />
-        </div>
+
+        {user ? (
+          <>
+            <div className="avatar">
+              <img src="https://i.pravatar.cc/64?img=12" alt={user.name} />
+            </div>
+            <button className="logout-btn" onClick={logout}>Logout</button>
+          </>
+        ) : (
+          <Link to="/login" className="logout-btn" style={{ textDecoration: 'none' }}>
+            Login
+          </Link>
+        )}
       </div>
     </header>
   )

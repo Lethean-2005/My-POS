@@ -1,19 +1,37 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Icon } from '../icons.jsx'
-import { categories, menuItems } from '../data.js'
+import { api } from '../api.js'
 
 export default function MenuSection({ onAdd }) {
   const [active, setActive] = useState('all')
   const [query, setQuery] = useState('')
   const [qtys, setQtys] = useState({})
+  const [categories, setCategories] = useState([])
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    Promise.all([api.categories(), api.menuItems()])
+      .then(([cats, mi]) => {
+        if (cancelled) return
+        setCategories(cats)
+        setItems(mi)
+      })
+      .catch(err => !cancelled && setError(err.message))
+      .finally(() => !cancelled && setLoading(false))
+    return () => { cancelled = true }
+  }, [])
 
   const updateQty = (id, delta) =>
     setQtys(prev => ({ ...prev, [id]: Math.max(0, (prev[id] || 0) + delta) }))
 
-  const filtered = menuItems.filter(m => {
+  const activeCat = categories.find(c => c.slug === active)
+  const filtered = items.filter(m => {
     const matchesCat =
       active === 'all' ||
-      m.category.toLowerCase().includes(categories.find(c => c.id === active)?.name.toLowerCase() || '')
+      (activeCat && m.category_label?.toLowerCase().includes(activeCat.name.toLowerCase()))
     const matchesQuery = m.name.toLowerCase().includes(query.toLowerCase())
     return matchesCat && matchesQuery
   })
@@ -42,33 +60,37 @@ export default function MenuSection({ onAdd }) {
         </div>
       </div>
 
+      {error && <div style={{ color: 'var(--red)' }}>Error: {error}</div>}
+
       <div className="cat-row">
         {categories.map(c => (
           <button
             key={c.id}
-            className={`cat-card${active === c.id ? ' active' : ''}`}
-            onClick={() => setActive(c.id)}
+            className={`cat-card${active === c.slug ? ' active' : ''}`}
+            onClick={() => setActive(c.slug)}
           >
             <div className="cat-emoji">{c.emoji}</div>
             <div className="cat-name">{c.name}</div>
-            <div className="cat-count">{c.count} Menus</div>
+            <div className="cat-count">{c.item_count} Menus</div>
           </button>
         ))}
       </div>
 
+      {loading && <div className="muted">Loading menu…</div>}
+
       <div className="menu-grid">
         {filtered.map(m => {
-          const qty = qtys[m.id] ?? (m.qty || 0)
+          const qty = qtys[m.id] ?? 0
           return (
             <article key={m.id} className="menu-card">
               <div className="menu-img-wrap">
-                <img src={m.img} alt={m.name} loading="lazy" />
+                <img src={m.image_url} alt={m.name} loading="lazy" />
               </div>
               <div className="menu-info">
                 <div className="menu-meta">
-                  <span className="menu-cat">{m.category}</span>
-                  <span className={`dietary ${m.veg ? 'veg' : m.egg ? 'egg' : 'non'}`}>
-                    <i />{m.veg ? 'Veg' : m.egg ? 'Egg' : 'Non Veg'}
+                  <span className="menu-cat">{m.category_label}</span>
+                  <span className={`dietary ${m.is_veg ? 'veg' : m.is_egg ? 'egg' : 'non'}`}>
+                    <i />{m.is_veg ? 'Veg' : m.is_egg ? 'Egg' : 'Non Veg'}
                   </span>
                 </div>
                 <h3 className="menu-name">{m.name}</h3>
