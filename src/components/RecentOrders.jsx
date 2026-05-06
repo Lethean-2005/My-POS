@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react'
 import { Icon } from '../icons.jsx'
 import { api } from '../api.js'
 
-const TABS = ['All Orders', 'Dine In', 'Take Away', 'Delivery', 'Table']
+const TABS = [
+  { label: 'All Orders', icon: 'orders' },
+  { label: 'Dine In',    icon: 'dinein' },
+  { label: 'Take Away',  icon: 'takeaway' },
+  { label: 'Delivery',   icon: 'delivery' },
+  { label: 'Table',      icon: 'table' }
+]
 
 const TYPE_LABELS = {
   dinein:   { label: 'Dine In',   color: 'green',  icon: 'dinein' },
@@ -52,11 +58,11 @@ export default function RecentOrders({ refreshKey = 0 }) {
         <div className="tabs">
           {TABS.map(t => (
             <button
-              key={t}
-              className={`tab${active === t ? ' active' : ''}`}
-              onClick={() => setActive(t)}
+              key={t.label}
+              className={`tab${active === t.label ? ' active' : ''}`}
+              onClick={() => setActive(t.label)}
             >
-              {t}
+              {t.label}
             </button>
           ))}
         </div>

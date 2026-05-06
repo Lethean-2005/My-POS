@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext.jsx'
-
-const logo = '/favicon.svg'
+import { Icon } from '../icons.jsx'
+import logo from '../assets/logo.jfif'
 
 export default function LoginPage() {
   const { user, login } = useAuth()
@@ -12,6 +12,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('admin@pos.com')
   const [password, setPassword] = useState('password')
+  const [showPwd, setShowPwd] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -51,12 +52,23 @@ export default function LoginPage() {
           </label>
           <label>
             <span>Password</span>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
+            <div className="auth-pwd">
+              <input
+                type={showPwd ? 'text' : 'password'}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="auth-pwd-toggle"
+                onClick={() => setShowPwd(s => !s)}
+                aria-label={showPwd ? 'Hide password' : 'Show password'}
+                tabIndex={-1}
+              >
+                <Icon name={showPwd ? 'eye-off' : 'eye'} size={16} />
+              </button>
+            </div>
           </label>
 
           {error && <div className="auth-error">{error}</div>}
