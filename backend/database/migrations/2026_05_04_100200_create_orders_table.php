@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->string('order_no')->unique();
             $table->string('customer_name')->nullable();
             $table->enum('type', ['dinein', 'takeaway', 'delivery', 'table'])->default('dinein');
-            $table->enum('status', ['pending', 'preparing', 'ready', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'preparing', 'ready', 'completed', 'cancelled', 'refunded', 'paid', 'held'])->default('pending');
             $table->string('table_no')->nullable();
             $table->string('waiter')->nullable();
             $table->decimal('subtotal', 10, 2)->default(0);

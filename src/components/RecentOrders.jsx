@@ -25,7 +25,7 @@ const timerColor = (eta) => {
   return 'green'
 }
 
-export default function RecentOrders() {
+export default function RecentOrders({ refreshKey = 0 }) {
   const [active, setActive] = useState('All Orders')
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
@@ -33,12 +33,13 @@ export default function RecentOrders() {
 
   useEffect(() => {
     let cancelled = false
+    setLoading(true)
     api.recentOrders()
       .then(data => { if (!cancelled) setOrders(data) })
       .catch(err => { if (!cancelled) setError(err.message) })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
-  }, [])
+  }, [refreshKey])
 
   const visible = active === 'All Orders'
     ? orders

@@ -11,7 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->string('slug')->unique();
             $table->string('name');
-            $table->string('emoji')->nullable();
+            $table->string('icon')->nullable();
+            $table->string('image_url')->nullable();
             $table->unsignedInteger('item_count')->default(0);
             $table->unsignedInteger('sort')->default(0);
             $table->timestamps();

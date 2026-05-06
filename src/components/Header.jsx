@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Icon } from '../icons.jsx'
 import { useAuth } from '../auth/AuthContext.jsx'
-
-const logo = '/favicon.svg'
+import logo from '../assets/logo.jfif'
 
 const NAV = [
   { id: 'pos',         label: 'POS',         icon: 'pos',         to: '/pos' },
@@ -19,9 +18,6 @@ export default function Header({ active = 'pos', onChange }) {
     <header className="app-header">
       <div className="brand">
         <img src={logo} alt="Dreams POS" className="brand-logo-img" />
-        <button className="brand-grid" aria-label="Menu">
-          <Icon name="grid" size={18} />
-        </button>
       </div>
 
       <nav className="top-nav">

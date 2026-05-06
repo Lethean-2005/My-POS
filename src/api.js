@@ -57,5 +57,49 @@ export const api = {
     return request(`/menu-items${qs ? `?${qs}` : ''}`)
   },
   recentOrders: () => request('/orders/recent'),
-  createOrder:  (payload) => request('/orders', { method: 'POST', body: JSON.stringify(payload) })
+  createOrder:  (payload) => request('/orders', { method: 'POST', body: JSON.stringify(payload) }),
+  allOrders:    () => request('/orders'),
+  getOrder:     (id) => request(`/orders/${id}`),
+  refundOrder:  (id, payload) => request(`/orders/${id}/refund`, { method: 'POST', body: JSON.stringify(payload || {}) }),
+
+  // admin product management (requires auth)
+  adminMenuItems:    (params = {}) => {
+    const qs = new URLSearchParams({ all: '1', ...params }).toString()
+    return request(`/menu-items${qs ? `?${qs}` : ''}`)
+  },
+  createMenuItem:    (payload)        => request('/menu-items',        { method: 'POST',   body: JSON.stringify(payload) }),
+  updateMenuItem:    (id, payload)    => request(`/menu-items/${id}`,  { method: 'PUT',    body: JSON.stringify(payload) }),
+  deleteMenuItem:    (id)             => request(`/menu-items/${id}`,  { method: 'DELETE' }),
+  adjustStock:       (id, payload)    => request(`/menu-items/${id}/stock`, { method: 'POST', body: JSON.stringify(payload) }),
+  stockMovements:    (id)             => request(`/menu-items/${id}/movements`),
+
+  // admin categories
+  createCategory: (payload)     => request('/categories',       { method: 'POST',   body: JSON.stringify(payload) }),
+  updateCategory: (id, payload) => request(`/categories/${id}`, { method: 'PUT',    body: JSON.stringify(payload) }),
+  deleteCategory: (id)          => request(`/categories/${id}`, { method: 'DELETE' }),
+
+  // file uploads
+  uploadImage: async (file, folder = 'products') => {
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('folder', folder)
+    const token = tokenStore.get()
+    const res = await fetch(`${BASE}/uploads`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      body: fd
+    })
+    if (!res.ok) {
+      let msg = `${res.status} ${res.statusText}`
+      try {
+        const body = await res.json()
+        if (body?.message) msg = body.message
+      } catch { /* noop */ }
+      throw new Error(msg)
+    }
+    return res.json()
+  }
 }

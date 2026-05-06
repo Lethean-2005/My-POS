@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react'
 import { Icon } from '../icons.jsx'
 import { api } from '../api.js'
 
-export default function MenuSection({ onAdd }) {
+export default function MenuSection({ cart = [], onAdd, onRemove }) {
   const [active, setActive] = useState('all')
   const [query, setQuery] = useState('')
-  const [qtys, setQtys] = useState({})
   const [categories, setCategories] = useState([])
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
@@ -24,8 +23,7 @@ export default function MenuSection({ onAdd }) {
     return () => { cancelled = true }
   }, [])
 
-  const updateQty = (id, delta) =>
-    setQtys(prev => ({ ...prev, [id]: Math.max(0, (prev[id] || 0) + delta) }))
+  const cartQty = id => cart.find(i => i.id === id)?.qty ?? 0
 
   const activeCat = categories.find(c => c.slug === active)
   const filtered = items.filter(m => {
@@ -64,9 +62,17 @@ export default function MenuSection({ onAdd }) {
             className={`cat-card${active === c.slug ? ' active' : ''}`}
             onClick={() => setActive(c.slug)}
           >
-            <div className="cat-emoji">{c.emoji}</div>
-            <div className="cat-name">{c.name}</div>
-            <div className="cat-count">{c.item_count} Items</div>
+            {c.image_url ? (
+              <img className="cat-image" src={c.image_url} alt={c.name} loading="lazy" />
+            ) : (
+              <div className="cat-emoji">
+                <Icon name={c.icon || 'box'} size={18} />
+              </div>
+            )}
+            <div className="cat-text">
+              <div className="cat-name">{c.name}</div>
+              <div className="cat-count">{c.item_count} Items</div>
+            </div>
           </button>
         ))}
       </div>
@@ -75,11 +81,17 @@ export default function MenuSection({ onAdd }) {
 
       <div className="menu-grid">
         {filtered.map(m => {
-          const qty = qtys[m.id] ?? 0
+          const qty = cartQty(m.id)
+          const stock = Number(m.stock_qty) || 0
+          const out = stock <= 0
+          const low = !out && stock <= (Number(m.low_stock_threshold) || 5)
+          const remaining = stock - qty
           return (
-            <article key={m.id} className="menu-card">
+            <article key={m.id} className={`menu-card${out ? ' menu-out' : ''}`}>
               <div className="menu-img-wrap">
                 <img src={m.image_url} alt={m.name} loading="lazy" />
+                {out && <span className="stock-badge stock-out">Out of stock</span>}
+                {low && <span className="stock-badge stock-low">Only {stock} left</span>}
               </div>
               <div className="menu-info">
                 <div className="menu-meta">
@@ -89,9 +101,9 @@ export default function MenuSection({ onAdd }) {
                 <div className="menu-bottom">
                   <div className="menu-price">${m.price}</div>
                   <div className="qty-pill">
-                    <button onClick={() => updateQty(m.id, -1)}>−</button>
+                    <button onClick={() => onRemove?.(m.id, -1)} disabled={qty === 0}>−</button>
                     <span>{qty}</span>
-                    <button onClick={() => { updateQty(m.id, +1); onAdd?.(m) }}>+</button>
+                    <button onClick={() => onAdd?.(m)} disabled={out || remaining <= 0}>+</button>
                   </div>
                 </div>
               </div>

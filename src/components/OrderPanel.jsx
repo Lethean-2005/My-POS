@@ -1,6 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Icon } from '../icons.jsx'
-import { orderItems as initial } from '../data.js'
 
 const TYPES = [
   { id: 'dinein', label: 'Dine In', icon: 'dinein' },
@@ -9,34 +8,43 @@ const TYPES = [
   { id: 'table', label: 'Table', icon: 'table' }
 ]
 
-export default function OrderPanel() {
-  const [type, setType] = useState('dinein')
-  const [items, setItems] = useState(initial)
+const TAX_RATE = 0.18
 
-  const updateQty = (id, delta) =>
-    setItems(items.map(i => {
-      if (i.id !== id) return i
-      const qty = Math.max(0, i.qty + delta)
-      const total = qty * (i.itemPrice || 33)
-      return { ...i, qty, total }
-    }))
-
-  const removeItem = id => setItems(items.filter(i => i.id !== id))
-
+export default function OrderPanel({
+  items = [],
+  type = 'dinein',
+  onTypeChange,
+  customerName = '',
+  onCustomerNameChange,
+  onUpdateQty,
+  onRemoveItem,
+  onPlaceOrder,
+  placing = false,
+  error,
+  success
+}) {
   const subTotal = useMemo(
-    () => items.reduce((s, i) => s + (i.total || i.qty * (i.itemPrice || 33)), 0),
+    () => items.reduce((s, i) => s + (Number(i.itemPrice) || 0) * i.qty, 0),
     [items]
   )
-  const tax = subTotal * 0.18
+  const tax = subTotal * TAX_RATE
   const total = subTotal + tax
+
+  const placedAt = useMemo(
+    () => new Date().toLocaleString([], {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    }),
+    [items.length]
+  )
 
   return (
     <aside className="order-panel">
       <div className="order-head">
         <div>
-          <h2 className="order-title">Order #56998</h2>
+          <h2 className="order-title">{items.length === 0 ? 'New Order' : 'Current Order'}</h2>
         </div>
-        <div className="order-date">08 Oct, 2025, 12:44 PM</div>
+        <div className="order-date">{placedAt}</div>
       </div>
 
       <div className="type-row">
@@ -44,7 +52,7 @@ export default function OrderPanel() {
           <button
             key={t.id}
             className={`type-btn${type === t.id ? ' active' : ''}`}
-            onClick={() => setType(t.id)}
+            onClick={() => onTypeChange?.(t.id)}
           >
             <Icon name={t.icon} size={14} />
             <span>{t.label}</span>
@@ -53,15 +61,21 @@ export default function OrderPanel() {
       </div>
 
       <div className="select-row">
-        <div className="select">
-          <span className="select-label">Waiter</span>
-          <Icon name="caret" size={14} color="#94a3b8" />
+        <div className="select" style={{ flex: 1 }}>
+          <input
+            className="customer-input"
+            placeholder="Customer name (optional)"
+            value={customerName}
+            onChange={e => onCustomerNameChange?.(e.target.value)}
+            style={{
+              border: 'none',
+              outline: 'none',
+              background: 'transparent',
+              width: '100%',
+              fontSize: 13
+            }}
+          />
         </div>
-        <div className="select">
-          <span className="select-label">Select Customer</span>
-          <Icon name="caret" size={14} color="#94a3b8" />
-        </div>
-        <button className="add-btn"><Icon name="plus" size={14} /></button>
       </div>
 
       <div className="ordered-head">
@@ -70,45 +84,49 @@ export default function OrderPanel() {
       </div>
 
       <div className="ordered-list">
+        {items.length === 0 && (
+          <div className="muted" style={{ padding: '24px 0', textAlign: 'center' }}>
+            Cart is empty. Tap + on an accessory to add it.
+          </div>
+        )}
         {items.map((it, idx) => (
           <div key={it.id} className={`order-item${idx === 0 ? ' highlight' : ''}`}>
-            {idx === 0 && (
-              <div className="order-item-head">
-                <img src={it.img} alt={it.name} />
-                <div className="oi-info">
-                  <div className="oi-name">{it.name}</div>
-                  <div className="oi-size">{it.size}</div>
-                </div>
-                <div className="qty-pill dark">
-                  <button onClick={() => updateQty(it.id, -1)}>−</button>
-                  <span>{it.qty}</span>
-                  <button onClick={() => updateQty(it.id, +1)}>+</button>
-                </div>
-                <button className="ghost-link"><Icon name="edit" size={12} /> Add Note</button>
-              </div>
-            )}
             {idx === 0 ? (
-              <div className="oi-totals">
-                <div><span className="muted">Item Price</span><strong>${it.itemPrice || 33}</strong></div>
-                <div><span className="muted">Amount</span><strong>${(it.itemPrice || 33) * it.qty}</strong></div>
-                <div><span className="muted">Total</span><strong className="blue">${(it.itemPrice || 33) * it.qty}</strong></div>
-              </div>
+              <>
+                <div className="order-item-head">
+                  <img src={it.img} alt={it.name} />
+                  <div className="oi-info">
+                    <div className="oi-name">{it.name}</div>
+                    <div className="oi-size">{it.size || '—'}</div>
+                  </div>
+                  <div className="qty-pill dark">
+                    <button onClick={() => onUpdateQty?.(it.id, -1)}>−</button>
+                    <span>{it.qty}</span>
+                    <button onClick={() => onUpdateQty?.(it.id, +1)}>+</button>
+                  </div>
+                  <button className="x-btn" onClick={() => onRemoveItem?.(it.id)} aria-label="Remove">
+                    <Icon name="x" size={12} />
+                  </button>
+                </div>
+                <div className="oi-totals">
+                  <div><span className="muted">Item Price</span><strong>${(Number(it.itemPrice) || 0).toFixed(2)}</strong></div>
+                  <div><span className="muted">Qty</span><strong>{it.qty}</strong></div>
+                  <div><span className="muted">Total</span><strong className="blue">${((Number(it.itemPrice) || 0) * it.qty).toFixed(2)}</strong></div>
+                </div>
+              </>
             ) : (
               <div className="oi-row">
                 <img src={it.img} alt={it.name} />
                 <div className="oi-info">
                   <div className="oi-name">{it.name}</div>
-                  <div className="oi-size">{it.size}</div>
+                  <div className="oi-size">{it.size || '—'}</div>
                 </div>
                 <div className="qty-pill light">
-                  <button onClick={() => updateQty(it.id, -1)}>−</button>
+                  <button onClick={() => onUpdateQty?.(it.id, -1)}>−</button>
                   <span>{it.qty}</span>
-                  <button onClick={() => updateQty(it.id, +1)}>+</button>
+                  <button onClick={() => onUpdateQty?.(it.id, +1)}>+</button>
                 </div>
-                <button className={`ghost-link ${it.note === 'View Note' ? 'green' : ''}`}>
-                  <Icon name="edit" size={12} /> {it.note}
-                </button>
-                <button className="x-btn" onClick={() => removeItem(it.id)}>
+                <button className="x-btn" onClick={() => onRemoveItem?.(it.id)} aria-label="Remove">
                   <Icon name="x" size={12} />
                 </button>
               </div>
@@ -124,7 +142,24 @@ export default function OrderPanel() {
         <div className="pay-row total"><span>Amount to be Paid</span><span>${total.toFixed(2)}</span></div>
       </div>
 
-      <button className="place-btn">Place an Order</button>
+      {error && (
+        <div style={{ color: 'var(--red)', fontSize: 12, marginBottom: 8 }}>
+          {error}
+        </div>
+      )}
+      {success && (
+        <div style={{ color: 'var(--green, #10b981)', fontSize: 12, marginBottom: 8 }}>
+          {success}
+        </div>
+      )}
+
+      <button
+        className="place-btn"
+        onClick={onPlaceOrder}
+        disabled={items.length === 0 || placing}
+      >
+        {placing ? 'Placing…' : 'Place an Order'}
+      </button>
 
       <div className="action-grid">
         <button><Icon name="print" size={14} /> Print</button>
