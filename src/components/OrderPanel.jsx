@@ -65,8 +65,8 @@ export default function OrderPanel() {
       </div>
 
       <div className="ordered-head">
-        <h3>Ordered Menus</h3>
-        <span className="muted">Total Menus : {items.length}</span>
+        <h3>Ordered Items</h3>
+        <span className="muted">Total Items : {items.length}</span>
       </div>
 
       <div className="ordered-list">

@@ -39,12 +39,7 @@ export default function MenuSection({ onAdd }) {
   return (
     <section className="panel menu-section">
       <div className="panel-head">
-        <h2 className="panel-title">Menu Categories</h2>
-        <div className="legend">
-          <span className="leg leg-veg"><i /> Veg</span>
-          <span className="leg leg-non"><i /> Non Veg</span>
-          <span className="leg leg-egg"><i /> Egg</span>
-        </div>
+        <h2 className="panel-title">Accessory Categories</h2>
         <div className="search-wrap">
           <Icon name="search" size={14} color="#94a3b8" />
           <input
@@ -71,12 +66,12 @@ export default function MenuSection({ onAdd }) {
           >
             <div className="cat-emoji">{c.emoji}</div>
             <div className="cat-name">{c.name}</div>
-            <div className="cat-count">{c.item_count} Menus</div>
+            <div className="cat-count">{c.item_count} Items</div>
           </button>
         ))}
       </div>
 
-      {loading && <div className="muted">Loading menu…</div>}
+      {loading && <div className="muted">Loading accessories…</div>}
 
       <div className="menu-grid">
         {filtered.map(m => {
@@ -89,9 +84,6 @@ export default function MenuSection({ onAdd }) {
               <div className="menu-info">
                 <div className="menu-meta">
                   <span className="menu-cat">{m.category_label}</span>
-                  <span className={`dietary ${m.is_veg ? 'veg' : m.is_egg ? 'egg' : 'non'}`}>
-                    <i />{m.is_veg ? 'Veg' : m.is_egg ? 'Egg' : 'Non Veg'}
-                  </span>
                 </div>
                 <h3 className="menu-name">{m.name}</h3>
                 <div className="menu-bottom">

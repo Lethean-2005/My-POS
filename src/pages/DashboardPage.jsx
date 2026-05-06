@@ -50,7 +50,7 @@ export default function DashboardPage() {
             <StatCard label="Items Sold Today"  value={fmt(stats.items_sold_today)}     accent="orange" icon="cart" />
             <StatCard label="Total Orders"      value={fmt(stats.total_orders)}         accent="pink"   icon="invoice" />
             <StatCard label="All-Time Revenue"  value={money(stats.total_revenue)}      accent="green"  icon="transactions" />
-            <StatCard label="Active Menu Items" value={fmt(stats.menu_count)}           accent="blue"   icon="kitchen" />
+            <StatCard label="Active Accessories" value={fmt(stats.menu_count)}          accent="blue"   icon="kitchen" />
           </section>
 
           <section className="dash-grid">

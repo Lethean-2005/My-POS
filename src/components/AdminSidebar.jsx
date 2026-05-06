@@ -7,7 +7,7 @@ const logo = '/favicon.svg'
 const NAV = [
   { to: '/dashboard',     label: 'Dashboard',   icon: 'chart' },
   { to: '/admin/orders',  label: 'Orders',      icon: 'orders' },
-  { to: '/admin/menu',    label: 'Menu Items',  icon: 'kitchen' },
+  { to: '/admin/menu',    label: 'Accessories', icon: 'kitchen' },
   { to: '/admin/categories', label: 'Categories', icon: 'grid' },
   { to: '/admin/kitchen', label: 'Kitchen',     icon: 'kitchen' },
   { to: '/admin/reservations', label: 'Reservations', icon: 'reservation' },

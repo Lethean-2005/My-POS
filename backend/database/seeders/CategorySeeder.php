@@ -10,12 +10,12 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['slug' => 'all',      'name' => 'All Menus', 'emoji' => '🍽️', 'item_count' => 200, 'sort' => 1],
-            ['slug' => 'seafood',  'name' => 'Sea Food',  'emoji' => '🦐', 'item_count' => 35,  'sort' => 2],
-            ['slug' => 'pizza',    'name' => 'Pizza',     'emoji' => '🍕', 'item_count' => 180, 'sort' => 3],
-            ['slug' => 'salads',   'name' => 'Salads',    'emoji' => '🥗', 'item_count' => 120, 'sort' => 4],
-            ['slug' => 'tacos',    'name' => 'Tacos',     'emoji' => '🌮', 'item_count' => 150, 'sort' => 5],
-            ['slug' => 'soups',    'name' => 'Soups',     'emoji' => '🍜', 'item_count' => 100, 'sort' => 6],
+            ['slug' => 'all',       'name' => 'All Items',  'emoji' => '🛒', 'item_count' => 200, 'sort' => 1],
+            ['slug' => 'audio',     'name' => 'Audio',      'emoji' => '🎧', 'item_count' => 45,  'sort' => 2],
+            ['slug' => 'cables',    'name' => 'Cables',     'emoji' => '🔌', 'item_count' => 60,  'sort' => 3],
+            ['slug' => 'chargers',  'name' => 'Chargers',   'emoji' => '⚡', 'item_count' => 40,  'sort' => 4],
+            ['slug' => 'wearables', 'name' => 'Wearables',  'emoji' => '⌚', 'item_count' => 25,  'sort' => 5],
+            ['slug' => 'computer',  'name' => 'Computer',   'emoji' => '💻', 'item_count' => 80,  'sort' => 6],
         ];
 
         foreach ($categories as $c) {

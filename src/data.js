@@ -3,43 +3,43 @@
 export const orderItems = [
   {
     id: 1,
-    name: 'Chicken Taco',
-    size: 'Medium',
-    img: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=200&q=80',
+    name: 'Wireless Earbuds',
+    size: 'Black',
+    img: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=200&q=80',
     qty: 2,
-    itemPrice: 33,
-    total: 66,
+    itemPrice: 80,
+    total: 160,
     note: 'Add Note',
     highlighted: true
   },
   {
     id: 2,
-    name: 'Grilled Chicken',
-    size: 'Small : 250 gms',
-    img: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=200&q=80',
+    name: 'Smart Watch',
+    size: '44mm Silver',
+    img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&q=80',
     qty: 1,
-    itemPrice: 0,
-    total: 0,
+    itemPrice: 44,
+    total: 44,
     note: 'Add Note'
   },
   {
     id: 3,
-    name: 'Lobster Thermidor',
-    size: 'Half Lobster : 300 gms',
-    img: 'https://images.unsplash.com/photo-1625944525533-473f1b3d9684?w=200&q=80',
+    name: 'Mechanical Keyboard',
+    size: 'Wireless RGB',
+    img: 'https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=200&q=80',
     qty: 1,
-    itemPrice: 0,
-    total: 0,
+    itemPrice: 45,
+    total: 45,
     note: 'View Note'
   },
   {
     id: 4,
-    name: 'Spinach & Corn Pizza',
-    size: 'Small : 6 inches',
-    img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200&q=80',
+    name: 'Bluetooth Speaker',
+    size: 'Portable',
+    img: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=200&q=80',
     qty: 1,
-    itemPrice: 0,
-    total: 0,
+    itemPrice: 80,
+    total: 80,
     note: 'Add Note'
   }
 ]
