@@ -25,7 +25,7 @@ class MenuItemSeeder extends Seeder
             ['name' => 'USB-C Cable',          'category_label' => 'Cables',    'price' => 25,  'image_url' => 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=400&q=80'],
             ['name' => 'HDMI Cable',           'category_label' => 'Cables',    'price' => 33,  'image_url' => 'https://images.unsplash.com/photo-1601524909162-ae8725290836?w=400&q=80'],
             ['name' => 'Smart Watch',          'category_label' => 'Wearables', 'price' => 44,  'image_url' => 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80'],
-            ['name' => 'Power Bank 20K mAh',   'category_label' => 'Chargers',  'price' => 66,  'image_url' => 'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=400&q=80'],
+            ['name' => 'Power Bank 20K mAh',   'category_label' => 'Chargers',  'price' => 66,  'image_url' => 'https://loremflickr.com/400/300/power,bank,battery/all'],
             ['name' => 'Wireless Charger',     'category_label' => 'Chargers',  'price' => 36,  'image_url' => 'https://images.unsplash.com/photo-1592434134753-a70baf7979d5?w=400&q=80'],
             ['name' => 'Laptop Stand',         'category_label' => 'Computer',  'price' => 49,  'badge' => 'Must Try', 'image_url' => 'https://images.unsplash.com/photo-1611174743420-3d7df880ce32?w=400&q=80'],
             ['name' => 'Fast Charger 65W',     'category_label' => 'Chargers',  'price' => 69,  'image_url' => 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400&q=80'],
