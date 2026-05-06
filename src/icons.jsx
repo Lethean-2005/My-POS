@@ -84,5 +84,8 @@ export const ICON_NAMES = Object.keys(ALIASES)
 export const CATEGORY_ICON_NAMES = [
   'cart', 'box', 'headphones', 'plug', 'bolt', 'watch',
   'laptop', 'mobile', 'cpu', 'keyboard', 'microphone',
-  'camera', 'battery', 'usb', 'kitchen', 'store'
+  'camera', 'battery', 'usb', 'kitchen', 'store',
+  'device-tv', 'device-tablet', 'device-gamepad', 'diamond',
+  'gift', 'shirt', 'tag', 'star', 'mug', 'wallet',
+  'tools', 'home', 'lock'
 ]
