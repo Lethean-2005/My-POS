@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Icon } from '../icons.jsx'
 
 const TYPES = [
@@ -37,6 +37,30 @@ export default function OrderPanel({
     }),
     [items.length]
   )
+
+  const [invoiceOpen, setInvoiceOpen] = useState(false)
+
+  const invoiceData = useMemo(() => {
+    if (!invoiceOpen) return null
+    const now = new Date()
+    const refNo = 'REF' + now.getTime().toString().slice(-10)
+    const txnNo = String(now.getTime()).slice(-11)
+    return {
+      refNo,
+      txnNo,
+      typeLabel: TYPES.find(t => t.id === type)?.label || type,
+      dateText: now.toLocaleString([], {
+        month: 'short', day: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      }),
+      timeText: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
+  }, [invoiceOpen, type])
+
+  const openInvoice = () => {
+    if (items.length === 0) return
+    setInvoiceOpen(true)
+  }
 
   return (
     <aside className="order-panel">
@@ -163,12 +187,166 @@ export default function OrderPanel({
 
       <div className="action-grid">
         <button><Icon name="print" size={14} /> Print</button>
-        <button><Icon name="invoice" size={14} /> Invoice</button>
+        <button onClick={openInvoice} disabled={items.length === 0}><Icon name="invoice" size={14} /> Invoice</button>
         <button><Icon name="draft" size={14} /> Draft</button>
         <button><Icon name="x" size={14} /> Cancel</button>
         <button><Icon name="minus" size={14} /> Void</button>
         <button><Icon name="transactions" size={14} /> Transactions</button>
       </div>
+
+      {invoiceOpen && invoiceData && (
+        <InvoiceReceipt
+          customerName={customerName}
+          typeLabel={invoiceData.typeLabel}
+          total={total}
+          subTotal={subTotal}
+          tax={tax}
+          itemsCount={items.length}
+          refNo={invoiceData.refNo}
+          txnNo={invoiceData.txnNo}
+          dateText={invoiceData.dateText}
+          timeText={invoiceData.timeText}
+          onClose={() => setInvoiceOpen(false)}
+        />
+      )}
     </aside>
+  )
+}
+
+function initials(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return 'WI'
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
+
+function fmtAmount(n) {
+  return (Number(n) || 0).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
+}
+
+function InvoiceReceipt({
+  customerName, typeLabel, total, subTotal, tax,
+  itemsCount, refNo, txnNo, dateText, onClose
+}) {
+  const display = (customerName || '').trim() || 'Walk-in Customer'
+  const init = initials(display)
+
+  const handleShare = async () => {
+    const text = `Invoice ${refNo} — ${fmtAmount(total)} USD — ${display}`
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Invoice', text }) } catch {}
+    } else if (navigator.clipboard) {
+      try { await navigator.clipboard.writeText(text) } catch {}
+    }
+  }
+  const handlePrint = () => window.print()
+  const handleDownload = () => {
+    const lines = [
+      `Invoice ${refNo}`,
+      `Transaction ID: ${txnNo}`,
+      `Customer: ${display}`,
+      `Order type: ${typeLabel}`,
+      `Items: ${itemsCount}`,
+      `Subtotal: ${fmtAmount(subTotal)} USD`,
+      `Tax: ${fmtAmount(tax)} USD`,
+      `Total: ${fmtAmount(total)} USD`,
+      `Date: ${dateText}`
+    ].join('\n')
+    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `invoice-${refNo}.txt`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+  const handleSave = handleDownload
+
+  return (
+    <div className="aba-backdrop" onClick={onClose}>
+      <div className="aba-stage" onClick={e => e.stopPropagation()}>
+        <div className="aba-receipt">
+          <button className="aba-close" onClick={onClose} aria-label="Close">
+            <Icon name="x" size={14} />
+          </button>
+
+          <div className="aba-head">
+            <div className="aba-avatar" aria-label={`Sender ${init}`}>{init}</div>
+            <div className="aba-head-text">
+              <div className="aba-amount">
+                <span>{fmtAmount(total)}</span><span className="aba-ccy">USD</span>
+              </div>
+              <div className="aba-from">Received from {display.toUpperCase()}</div>
+            </div>
+          </div>
+
+          <div className="aba-perf"><div className="aba-perf-dash" /></div>
+
+          <div className="aba-body">
+            <div className="aba-row">
+              <span className="aba-lbl aba-kh">លេខកូដប្រតិបត្តិការ៖</span>
+              <span className="aba-val">{txnNo}</span>
+            </div>
+            <div className="aba-row">
+              <span className="aba-lbl">Order type:</span>
+              <span className="aba-val">{typeLabel}</span>
+            </div>
+            <div className="aba-row">
+              <span className="aba-lbl">Original amount:</span>
+              <span className="aba-val">{fmtAmount(total)} USD</span>
+            </div>
+            <div className="aba-row">
+              <span className="aba-lbl">Subtotal:</span>
+              <span className="aba-val">{fmtAmount(subTotal)} USD</span>
+            </div>
+            <div className="aba-row">
+              <span className="aba-lbl">Tax:</span>
+              <span className="aba-val">{fmtAmount(tax)} USD</span>
+            </div>
+            <div className="aba-row">
+              <span className="aba-lbl">Reference #:</span>
+              <span className="aba-val">{refNo}</span>
+            </div>
+            <div className="aba-row">
+              <span className="aba-lbl">Items:</span>
+              <span className="aba-val">{itemsCount}</span>
+            </div>
+            <div className="aba-row">
+              <span className="aba-lbl">Customer:</span>
+              <span className="aba-val">{display.toUpperCase()}</span>
+            </div>
+            <div className="aba-row">
+              <span className="aba-lbl">Transaction date:</span>
+              <span className="aba-val">{dateText}</span>
+            </div>
+          </div>
+
+          <div className="aba-foot">
+            <div className="aba-foot-tag">POINT OF SALE</div>
+            <div className="aba-foot-divider" />
+            <div className="aba-foot-brand">Dreams POS</div>
+          </div>
+        </div>
+
+        <div className="aba-actions">
+          <ActionBtn icon="share" label="Share" onClick={handleShare} />
+          <ActionBtn icon="print" label="Print" onClick={handlePrint} />
+          <ActionBtn icon="download" label="Download" onClick={handleDownload} />
+          <ActionBtn icon="star" label="Save" onClick={handleSave} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ActionBtn({ icon, label, onClick }) {
+  return (
+    <button type="button" className="aba-action" onClick={onClick}>
+      <span className="aba-action-circle"><Icon name={icon} size={20} /></span>
+      <span className="aba-action-label">{label}</span>
+    </button>
   )
 }
