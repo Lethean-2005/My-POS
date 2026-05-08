@@ -17,16 +17,16 @@ const SECTIONS = [
     items: [
       { to: '/admin/menu',         label: 'Accessories',   icon: 'box' },
       { to: '/admin/categories',   label: 'Categories',    icon: 'grid' },
-      { to: '/admin/inventory',    label: 'Inventory',     icon: 'kitchen',  soon: true },
+      { to: '/admin/inventory',    label: 'Inventory',     icon: 'kitchen' },
     ]
   },
   {
     title: 'Operations',
     items: [
-      { to: '/admin/stock-in',     label: 'Stock In',      icon: 'draft',    soon: true },
-      { to: '/admin/suppliers',    label: 'Suppliers',     icon: 'store',    soon: true },
-      { to: '/admin/reports',      label: 'Reports',       icon: 'report',   soon: true },
-      { to: '/admin/settings',     label: 'Settings',      icon: 'settings', soon: true },
+      { to: '/admin/stock-in',     label: 'Stock In',      icon: 'draft' },
+      { to: '/admin/suppliers',    label: 'Suppliers',     icon: 'store' },
+      { to: '/admin/reports',      label: 'Reports',       icon: 'report' },
+      { to: '/admin/settings',     label: 'Settings',      icon: 'settings' },
     ]
   },
 ]

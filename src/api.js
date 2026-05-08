@@ -78,6 +78,42 @@ export const api = {
   updateCategory: (id, payload) => request(`/categories/${id}`, { method: 'PUT',    body: JSON.stringify(payload) }),
   deleteCategory: (id)          => request(`/categories/${id}`, { method: 'DELETE' }),
 
+  // inventory
+  inventorySummary:  ()              => request('/inventory/summary'),
+  inventoryMovements:(params = {})   => {
+    const qs = new URLSearchParams(
+      Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v != null))
+    ).toString()
+    return request(`/inventory/movements${qs ? `?${qs}` : ''}`)
+  },
+  bulkReceive:       (payload)       => request('/inventory/bulk-receive', { method: 'POST', body: JSON.stringify(payload) }),
+
+  // suppliers
+  suppliers:         (params = {})   => {
+    const qs = new URLSearchParams(params).toString()
+    return request(`/suppliers${qs ? `?${qs}` : ''}`)
+  },
+  createSupplier:    (payload)       => request('/suppliers',         { method: 'POST',   body: JSON.stringify(payload) }),
+  updateSupplier:    (id, payload)   => request(`/suppliers/${id}`,   { method: 'PUT',    body: JSON.stringify(payload) }),
+  deleteSupplier:    (id)            => request(`/suppliers/${id}`,   { method: 'DELETE' }),
+
+  // stock receipts
+  stockReceipts:     ()              => request('/stock-receipts'),
+  createStockReceipt:(payload)       => request('/stock-receipts',    { method: 'POST',   body: JSON.stringify(payload) }),
+  deleteStockReceipt:(id)            => request(`/stock-receipts/${id}`, { method: 'DELETE' }),
+
+  // reports
+  reports:           (params = {})   => {
+    const qs = new URLSearchParams(
+      Object.fromEntries(Object.entries(params).filter(([, v]) => v !== '' && v != null))
+    ).toString()
+    return request(`/reports${qs ? `?${qs}` : ''}`)
+  },
+
+  // settings
+  getSettings:       ()              => request('/settings'),
+  updateSettings:    (payload)       => request('/settings',          { method: 'PUT',    body: JSON.stringify(payload) }),
+
   // file uploads
   uploadImage: async (file, folder = 'products') => {
     const fd = new FormData()

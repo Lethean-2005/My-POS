@@ -44,6 +44,22 @@ class DashboardController extends Controller
 
         $recent = Order::with('items')->latest()->limit(6)->get();
 
+        $allActive   = MenuItem::where('active', true)->get();
+        $outOfStock  = $allActive->filter(fn ($m) => $m->stock_qty <= 0)->values();
+        $lowStock    = $allActive
+            ->filter(fn ($m) => $m->stock_qty > 0 && $m->stock_qty <= ($m->low_stock_threshold ?? 5))
+            ->sortBy('stock_qty')
+            ->values();
+
+        $lowStockSample = $lowStock->take(6)->map(fn ($m) => [
+            'id'                  => $m->id,
+            'name'                => $m->name,
+            'sku'                 => $m->sku,
+            'image_url'           => $m->image_url,
+            'stock_qty'           => (int) $m->stock_qty,
+            'low_stock_threshold' => (int) ($m->low_stock_threshold ?? 5),
+        ])->values();
+
         return response()->json([
             'stats' => [
                 'today_orders'    => $todayOrders,
@@ -52,11 +68,14 @@ class DashboardController extends Controller
                 'total_revenue'   => round($totalRevenue, 2),
                 'items_sold_today'=> $itemsSoldToday,
                 'menu_count'      => $menuCount,
+                'low_stock_count' => $lowStock->count(),
+                'out_of_stock_count' => $outOfStock->count(),
             ],
             'by_type'    => $byType,
             'last_7_days'=> $last7,
             'top_items'  => $topItems,
             'recent'     => $recent,
+            'low_stock'  => $lowStockSample,
         ]);
     }
 }

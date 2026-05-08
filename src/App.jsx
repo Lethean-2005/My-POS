@@ -7,6 +7,11 @@ import PosPage from './pages/PosPage.jsx'
 import AdminProductsPage from './pages/AdminProductsPage.jsx'
 import AdminOrdersPage from './pages/AdminOrdersPage.jsx'
 import AdminCategoriesPage from './pages/AdminCategoriesPage.jsx'
+import AdminInventoryPage from './pages/AdminInventoryPage.jsx'
+import AdminSuppliersPage from './pages/AdminSuppliersPage.jsx'
+import AdminStockInPage from './pages/AdminStockInPage.jsx'
+import AdminReportsPage from './pages/AdminReportsPage.jsx'
+import AdminSettingsPage from './pages/AdminSettingsPage.jsx'
 
 export default function App() {
   return (
@@ -43,6 +48,46 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <AdminCategoriesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/inventory"
+            element={
+              <ProtectedRoute>
+                <AdminInventoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/suppliers"
+            element={
+              <ProtectedRoute>
+                <AdminSuppliersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/stock-in"
+            element={
+              <ProtectedRoute>
+                <AdminStockInPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/reports"
+            element={
+              <ProtectedRoute>
+                <AdminReportsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <ProtectedRoute>
+                <AdminSettingsPage />
               </ProtectedRoute>
             }
           />

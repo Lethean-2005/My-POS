@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MenuItem;
 use App\Models\Order;
+use App\Models\Setting;
 use App\Models\StockMovement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,7 +13,10 @@ use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
-    private const TAX_RATE = 0.18;
+    private function taxRate(): float
+    {
+        return ((float) Setting::get('tax_rate', 18)) / 100;
+    }
 
     public function index(): JsonResponse
     {
@@ -106,7 +110,7 @@ class OrderController extends Controller
                 ]);
             }
 
-            $tax = round($subtotal * self::TAX_RATE, 2);
+            $tax = round($subtotal * $this->taxRate(), 2);
             $order->update([
                 'subtotal' => $subtotal,
                 'tax'      => $tax,

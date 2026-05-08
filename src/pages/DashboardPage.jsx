@@ -26,6 +26,7 @@ export default function DashboardPage() {
   const last7 = data?.last_7_days || []
   const top   = data?.top_items || []
   const recent = data?.recent || []
+  const lowStock = data?.low_stock || []
 
   const maxRev = Math.max(1, ...last7.map(d => Number(d.revenue) || 0))
 
@@ -51,7 +52,44 @@ export default function DashboardPage() {
             <StatCard label="Total Orders"      value={fmt(stats.total_orders)}         accent="pink"   icon="invoice" />
             <StatCard label="All-Time Revenue"  value={money(stats.total_revenue)}      accent="green"  icon="transactions" />
             <StatCard label="Active Accessories" value={fmt(stats.menu_count)}          accent="blue"   icon="kitchen" />
+            <StatCard label="Low Stock"          value={fmt(stats.low_stock_count ?? 0)}   accent="orange" icon="warning" />
+            <StatCard label="Out of Stock"       value={fmt(stats.out_of_stock_count ?? 0)} accent="pink"   icon="warning" />
           </section>
+
+          {(lowStock.length > 0 || (stats.out_of_stock_count ?? 0) > 0) && (
+            <section className="panel">
+              <div className="panel-head">
+                <h2 className="panel-title">Stock alerts</h2>
+                <Link to="/admin/inventory" className="link-btn">Open Inventory →</Link>
+              </div>
+              {lowStock.length === 0 ? (
+                <div className="muted">No low-stock items right now.</div>
+              ) : (
+                <ul className="top-list">
+                  {lowStock.map(m => {
+                    const out = m.stock_qty <= 0
+                    return (
+                      <li key={m.id}>
+                        <span className="rank" style={{ width: 32, height: 32 }}>
+                          {m.image_url
+                            ? <img src={m.image_url} alt="" style={{ width: 32, height: 32, borderRadius: 4, objectFit: 'cover' }} />
+                            : <Icon name="box" size={14} />}
+                        </span>
+                        <span className="top-name">
+                          <div>{m.name}</div>
+                          <div className="muted" style={{ fontSize: 11 }}>{m.sku || '—'}</div>
+                        </span>
+                        <span className={`stock-tag ${out ? 'out' : 'low'}`}>{m.stock_qty}</span>
+                        <span className="muted" style={{ fontSize: 11, minWidth: 80, textAlign: 'right' }}>
+                          ≤ {m.low_stock_threshold}
+                        </span>
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
+            </section>
+          )}
 
           <section className="dash-grid">
             <div className="panel">
